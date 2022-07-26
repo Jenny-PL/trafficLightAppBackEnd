@@ -20,6 +20,11 @@ def test_route():
     return "capstone project!"
 
 
+@app.route("/audiobook", methods=["POST"])
+def add_audio():
+    pass
+
+
 @app.route("/audiobook", methods=["GET"])
 def get_audiobook_chapter():
     # get one chapter from book to play; play in subsequent order

@@ -1,5 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from dotenv import load_dotenv
+from flask_cors import CORS
+
 import json
 import os
 import pymongo
@@ -12,7 +14,10 @@ DATABASE_URI = os.environ.get("DB_URI")
 client = pymongo.MongoClient(DATABASE_URI)
 mongo_db = client.trafficlight  # assign the specific database to mongo_db
 
+# collections available: audiobooks, playmusic, wakeup
+
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/")
@@ -41,8 +46,34 @@ def get_audiobook_chapter():
 
 @app.route("/alarmsong", methods=["GET"])
 def get_wake_up_song():
-    song = mongo_db.collection.find()
+    song = mongo_db.wakeup.find()
     return jsonify(song), 200
+
+
+# Example POST:
+# @app.route("/cocktails/", methods=["POST"])
+# def new_cocktail():
+#     raw_cocktail = request.get_json()
+#     raw_cocktail["date_added"] = datetime.utcnow()
+
+#     cocktail = Cocktail(**raw_cocktail)
+#     insert_result = recipes.insert_one(cocktail.to_bson())
+#     cocktail.id = PydanticObjectId(str(insert_result.inserted_id))
+#     print(cocktail)
+
+#     return cocktail.to_json()
+
+@app.route("/alarmsong", methods=["POST"])
+def add_wake_up_song(uploaded_filepath):
+    # uploaded_song = request.get_json()
+    # new_song = modified uploaded_song?
+    # make a song Model?
+    new_song = {'uploaded_filepath': uploaded_filepath}
+    mongo_db.wakeup.insertOne(new_song)
+    return jsonify(new_song), 201
+    # dp we still use db.session.add and commit with mongodb??  Think not.
+    # mongo_db.wakeup.session.insertOne(new_song)
+    # mongo_db.wakeup.session.commit()
 
 # goal: play kids music
 

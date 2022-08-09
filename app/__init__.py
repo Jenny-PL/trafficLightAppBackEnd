@@ -1,10 +1,15 @@
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from flask_cors import CORS
-
 import json
 import os
 import pymongo
+
+# not using yet
+import numpy as np
+import requests
+from io import BytesIO
+from scipy.io.wavfile import read, write
 # from flask_pymongo import PyMongo
 
 load_dotenv()  # use dotenv to hide sensitive credential as environment variables
@@ -42,11 +47,23 @@ def get_audiobook_chapter():
     return jsonify(first_chapter), 200
 
 # goal: play a wake up song
+# https://medium.com/analytics-vidhya/extracting-audio-files-from-api-storing-it-on-a-nosql-database-789c12311a48
 
 
 @app.route("/alarmsong", methods=["GET"])
 def get_wake_up_song():
-    song = mongo_db.wakeup.find()
+    songs = mongo_db.wakeup.find()  # get all songs
+    song = songs[0]  # get first song
+    write("audio.wav", song["rate"],
+          np.fromiter(song["data"], np.int16))
+
+    rate, data = read(BytesIO(songs.content))
+    # store in database
+    mongo_db.wakeup.insert_one(
+        {"rate": rate,
+         "data": data.tolist(),
+         })
+
     return jsonify(song), 200
 
 
@@ -64,12 +81,24 @@ def get_wake_up_song():
 #     return cocktail.to_json()
 
 @app.route("/alarmsong", methods=["POST"])
-def add_wake_up_song(uploaded_filepath):
+def add_wake_up_song():
     # uploaded_song = request.get_json()
     # new_song = modified uploaded_song?
     # make a song Model?
-    new_song = {'uploaded_filepath': uploaded_filepath}
-    mongo_db.wakeup.insertOne(new_song)
+
+    #  need to do something special to upload a file?
+    # https://flask.palletsprojects.com/en/2.1.x/patterns/fileuploads/
+    new_song = request
+    write("audio.wav", new_song["rate"],
+          np.fromiter(new_song["data"], np.int16))
+
+    rate, data = read(BytesIO(new_song.content))
+    # store in database
+    mongo_db.wakeup.insert_one(
+        {"rate": rate,
+         "data": data.tolist(),
+         })
+
     return jsonify(new_song), 201
     # dp we still use db.session.add and commit with mongodb??  Think not.
     # mongo_db.wakeup.session.insertOne(new_song)

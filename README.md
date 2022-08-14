@@ -1,5 +1,5 @@
 # Traffic Light App (back end)
-## Capstone Project for Ada Developers Academy, C17 (July/Aug 2022)
+## Capstone Project for Ada Developers Academy, C17 
 ## Problem solved:  
 - Many young kids (mine, specifically) can't tell time.  This app will allow them to know when they can get up in the morning (and let me sleep in longer).  We have a clock that does this at home, but it's rather bulky, so I'd like an app that we can pull up on a tablet to use if we're on vacation
 - Additionally, older kids or adults who can't tell time may find a visual alarm helpful

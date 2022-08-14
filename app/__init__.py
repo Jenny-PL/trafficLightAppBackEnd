@@ -18,8 +18,7 @@ DATABASE_URI = os.environ.get("DB_URI")
 # establish connection with database
 client = pymongo.MongoClient(DATABASE_URI)
 mongo_db = client.trafficlight  # assign the specific database to mongo_db
-
-# collections available: audiobooks, playmusic, wakeup
+# collections available: audiobooks, wakeup
 
 app = Flask(__name__)
 CORS(app)
@@ -39,12 +38,10 @@ def add_audio():
 def get_audiobook_chapter():
     # get one chapter from book to play; play in subsequent order
     # for now, just set up to get first chapter:
-    # Pooh_book = mongo_db.audiobooks.find_one({"title": "Winnie the Pooh"})
-    songCount = mongo_db.audiobooks.count_documents({})
-
     Pooh_book = mongo_db.audiobooks.find_one(
         {"title": "Winnie the Pooh"})  # get all documents (only 1)
     first_chapter = Pooh_book["chapters"][0]
+    songCount = mongo_db.audiobooks.count_documents({})
     numberOfChapters = songCount
     return jsonify(numberOfChapters, first_chapter), 200
 
@@ -55,11 +52,9 @@ def get_audiobook_chapter():
 @app.route("/alarmsong", methods=["GET"])
 def get_wake_up_song():
     songs = mongo_db.wakeup.find()  # get all songs
-    # song = songs[0]   # get first song
-    # formated_songs = []
-
     for song in songs:
-        write("audio.wav", np.fromiter(song["data"], np.int16))
+        write(np.fromiter(song["data"], np.int16))
+        return jsonify(songs), 200
         # formated_songs.append(song)
     # print(formated_songs)
 

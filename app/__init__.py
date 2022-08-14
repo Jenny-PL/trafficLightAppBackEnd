@@ -14,7 +14,7 @@ from scipy.io.wavfile import read, write
 
 load_dotenv()  # use dotenv to hide sensitive credential as environment variables
 
-DATABASE_URI = os.environ.get("DB_URI")
+DATABASE_URI = os.environ.get("MONGO_URI")
 # establish connection with database
 client = pymongo.MongoClient(DATABASE_URI)
 mongo_db = client.trafficlight  # assign the specific database to mongo_db

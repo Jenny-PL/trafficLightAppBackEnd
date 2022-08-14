@@ -21,7 +21,7 @@ mongo_db = client.trafficlight  # assign the specific database to mongo_db
 # collections available: audiobooks, wakeup
 
 app = Flask(__name__)
-# CORS(app)
+CORS(app)
 
 
 @app.route("/")

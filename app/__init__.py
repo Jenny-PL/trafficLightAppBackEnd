@@ -1,16 +1,16 @@
-from typing_extensions import dataclass_transform
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, send_file
 from dotenv import load_dotenv
 from flask_cors import CORS
 import json
 import os
 import pymongo
+import base64
 # not using yet
 import numpy as np
 import requests
 import io
 # from io import BytesIO
-# from scipy.io.wavfile import read, write
+from scipy.io.wavfile import read, write
 # from flask_pymongo import PyMongo
 
 load_dotenv()  # use dotenv to hide sensitive credential as environment variables
@@ -58,15 +58,22 @@ def get_wake_up_song(name):
     # response = songObject['data']
 
     # response = write(name, np.fromiter(songObject["data"], np.int16))
-    responseFile = io.BytesIO(songObject['data'])
-    Flask.sendFile(name)
+    decoded = base64.decodebytes(songObject['data']['$binary']['base64'])
+    responseFile = io.BytesIO(decoded)
 
-    # response = make_response(songObject['data'])
+    # flask.send_file(decoded)
+    return send_file(
+        io.BytesIO(responseFile),
+        mimetype=songObject['type'],
+        as_attachment=False,
+        download_name=songObject['name']), 200
+
+    # response = make_response(decoded)
     # response.headers['Content-Type'] = songObject['fileType']
     # response.headers["Content-Dispostion"] = 'inline'
 
     # return jsonify(response), 200
-    return 200
+    # return send_file(responseFile, mimesongObject['type'] ), 200
 
     # response = write(name=name, data=songObject['data'])
     # .read(

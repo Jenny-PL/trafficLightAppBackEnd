@@ -1,3 +1,4 @@
+from typing_extensions import dataclass_transform
 from flask import Flask, jsonify, request, make_response
 from dotenv import load_dotenv
 from flask_cors import CORS
@@ -56,7 +57,7 @@ def get_wake_up_song(name):
     songObject = mongo_db.wakeup.find_one({'name': name})  # fine song by name
     # response = songObject['data']
     # response = write(name, np.fromiter(songObject["data"], np.int16))
-    response = write(name, songObject['data'])
+    response = write(name=name, data=songObject['data'])
     # .read(
     #     0, len(songObject['data'])))
     return jsonify(response), 200

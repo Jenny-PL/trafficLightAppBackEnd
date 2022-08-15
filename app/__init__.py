@@ -56,9 +56,10 @@ def get_audiobook_chapter():
 def get_wake_up_song(name):
     songObject = mongo_db.wakeup.find_one({'name': name})  # fine song by name
     # response = songObject['data']
+
     # response = write(name, np.fromiter(songObject["data"], np.int16))
     responseFile = io.BytesIO(songObject['data'])
-    Flask.sendFile(responseFile)
+    Flask.sendFile(name)
 
     # response = make_response(songObject['data'])
     # response.headers['Content-Type'] = songObject['fileType']

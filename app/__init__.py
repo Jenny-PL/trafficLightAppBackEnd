@@ -58,7 +58,7 @@ def get_wake_up_song(name):
     # response = songObject['data']
 
     # response = write(name, np.fromiter(songObject["data"], np.int16))
-    decoded = base64.decodebytes(songObject['data']['$binary']['base64'])
+    decoded = base64.decodebytes(songObject['data']['$binary'])
     responseFile = io.BytesIO(decoded)
 
     # flask.send_file(decoded)

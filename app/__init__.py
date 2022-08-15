@@ -8,8 +8,9 @@ import pymongo
 # not using yet
 import numpy as np
 import requests
-from io import BytesIO
-from scipy.io.wavfile import read, write
+import io
+# from io import BytesIO
+# from scipy.io.wavfile import read, write
 # from flask_pymongo import PyMongo
 
 load_dotenv()  # use dotenv to hide sensitive credential as environment variables

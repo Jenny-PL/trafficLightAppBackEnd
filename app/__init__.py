@@ -55,6 +55,7 @@ def get_audiobook_chapter():
 @app.route("/alarmsong/<name>", methods=["GET"])
 def get_wake_up_song(name):
     songObject = mongo_db.wakeup.find_one({'name': name})  # fine song by name
+    print(type(songObject))
     # response = songObject['data']
 
     # response = write(name, np.fromiter(songObject["data"], np.int16))

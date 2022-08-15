@@ -5,7 +5,6 @@ from flask_cors import CORS
 import json
 import os
 import pymongo
-
 # not using yet
 import numpy as np
 import requests
@@ -57,7 +56,8 @@ def get_wake_up_song(name):
     songObject = mongo_db.wakeup.find_one({'name': name})  # fine song by name
     # response = songObject['data']
     # response = write(name, np.fromiter(songObject["data"], np.int16))
-    response = write(name=name, data=songObject['data'])
+    response = io.BytesIO(songObject['data'])
+    # response = write(name=name, data=songObject['data'])
     # .read(
     #     0, len(songObject['data'])))
     return jsonify(response), 200

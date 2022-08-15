@@ -55,7 +55,8 @@ def get_audiobook_chapter():
 def get_wake_up_song(name):
     songObject = mongo_db.wakeup.find_one({'name': name})  # fine song by name
     # response = songObject['data']
-    response = write(np.fromiter(songObject["data"], np.int16))
+    # response = write(name, np.fromiter(songObject["data"], np.int16))
+    response = write(name, songObject.data.read(0, songObject.data.length()))
     return jsonify(response), 200
 
 

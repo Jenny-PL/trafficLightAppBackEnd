@@ -58,12 +58,12 @@ def get_wake_up_song(name):
     print(type(songObject['data']))
     # response = write(name, np.fromiter(songObject["data"], np.int16))
 
-    # responseFile = base64.decodebytes(songObject['data']['$binary'])
+    decoded = base64.decodebytes(songObject['data']['$binary'])
 
     # decoded = songObject['data']
 
     # go back to this:
-    decoded = songObject['data']['$binary']
+    # decoded = songObject['data']['$binary']
     responseFile = io.BytesIO(decoded)
 
     # responseFile = io.BytesIO(songObject['data'])

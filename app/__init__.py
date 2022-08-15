@@ -48,31 +48,16 @@ def get_audiobook_chapter():
 # goal: play a wake up song
 # https://medium.com/analytics-vidhya/extracting-audio-files-from-api-storing-it-on-a-nosql-database-789c12311a48
 
-
-@app.route("/alarmsong", methods=["GET"])
-def get_wake_up_song():
-    songs = mongo_db.wakeup.find()  # get all songs
-    for song in songs:
-        write(np.fromiter(song["data"], np.int16))
-        return jsonify(songs), 200
-        # formated_songs.append(song)
-    # print(formated_songs)
-
-    return jsonify(songs), 200
+# {'name': fileDetails.filename, 'type': fileDetails.content_type, 'data': new_song}
 
 
-# Example POST:
-# @app.route("/cocktails/", methods=["POST"])
-# def new_cocktail():
-#     raw_cocktail = request.get_json()
-#     raw_cocktail["date_added"] = datetime.utcnow()
+@app.route("/alarmsong/<name>", methods=["GET"])
+def get_wake_up_song(name):
+    songObject = mongo_db.wakeup.find_one({'name': name})  # fine song by name
+    response = songObject['type']
+    # response = write(np.fromiter(songObject["data"], np.int16))
+    return jsonify(response), 200
 
-#     cocktail = Cocktail(**raw_cocktail)
-#     insert_result = recipes.insert_one(cocktail.to_bson())
-#     cocktail.id = PydanticObjectId(str(insert_result.inserted_id))
-#     print(cocktail)
-
-#     return cocktail.to_json()
 
 # function to check if file to upload is already in the DB:
 # def is_song_in_db():

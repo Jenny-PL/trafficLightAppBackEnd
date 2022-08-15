@@ -56,19 +56,16 @@ def get_audiobook_chapter():
 def get_wake_up_song(name):
     songObject = mongo_db.wakeup.find_one({'name': name})  # fine song by name
     print(type(songObject['data']))
-    # response = songObject['data']
-
     # response = write(name, np.fromiter(songObject["data"], np.int16))
 
-    # decoded = base64.decodebytes(
-    #     songObject['data']['$binary'])
+    responseFile = base64.decodebytes(
+        songObject['data']['$binary'])
 
     # decoded = songObject['data']
 
-    # try next:
-    decoded = songObject['data']['$binary']
-
-    responseFile = io.BytesIO(decoded)
+    # go back to this:
+    # decoded = songObject['data']['$binary']
+    # responseFile = io.BytesIO(decoded)
 
     # responseFile = io.BytesIO(songObject['data'])
     # next try to put responseFile back into io.B

@@ -73,8 +73,7 @@ def get_wake_up_song(name):
     return send_file(
         responseFile,
         mimetype=songObject['type'],
-        as_attachment=False,
-        download_name=name), 200
+        as_attachment=False), 200
 
     # response = make_response(decoded)
     # response.headers['Content-Type'] = songObject['fileType']

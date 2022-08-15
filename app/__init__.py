@@ -57,11 +57,19 @@ def get_wake_up_song(name):
     songObject = mongo_db.wakeup.find_one({'name': name})  # fine song by name
     # response = songObject['data']
     # response = write(name, np.fromiter(songObject["data"], np.int16))
-    response = io.BytesIO(songObject['data'])
+    responseFile = io.BytesIO(songObject['data'])
+
+    response = make_response(songObject['data'])
+    response.headers['Content-Type'] = songObject['fileType']
+    response.headers["Content-Dispostion"] = 'inline'
+
+    return jsonify(response), 200
+
     # response = write(name=name, data=songObject['data'])
     # .read(
     #     0, len(songObject['data'])))
-    return jsonify(response), 200
+
+    # return jsonify(responseFile), 200
 
 
 # function to check if file to upload is already in the DB:

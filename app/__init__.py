@@ -64,7 +64,7 @@ def get_wake_up_song(name):
 
     # go back to this:
     # decoded = songObject['data']['$binary']
-    responseFile = io.BytesIO(decoded)
+    responseFile = io.BytesIO(songObject['data']['$binary'])
 
     # responseFile = io.BytesIO(songObject['data'])
     # next try to put responseFile back into io.B
@@ -88,20 +88,7 @@ def get_wake_up_song(name):
     #     0, len(songObject['data'])))
 
 
-# function to check if file to upload is already in the DB:
-# def is_song_in_db():
-    # pass
-    # songCount = mongo_db.wakeup.countDocuments({'name': fileDetails.filename})
-    # fileDetails = request.files['song-file']
-    # if fileDetails not in songs:
-    #     mongo_db.wakeup.insert_one(
-    #         {'name': fileDetails.filename, 'type': fileDetails.content_type, 'data': new_song})
-    #     print("BSON song added to database!!")
-    # else:
-    #     print('file already in DB. No new file added')
-
-    #  From axios, songData is sent:songData.append('song-file', songFile);
-    # https://flask.palletsprojects.com/en/2.1.x/patterns/fileuploads/
+# https://flask.palletsprojects.com/en/2.1.x/patterns/fileuploads/
 @app.route("/alarmsong", methods=["POST"])
 def add_wake_up_song():
     if 'song-file' not in request.files:

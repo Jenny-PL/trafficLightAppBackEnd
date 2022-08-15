@@ -58,18 +58,18 @@ def get_wake_up_song(name):
     # response = songObject['data']
     # response = write(name, np.fromiter(songObject["data"], np.int16))
     responseFile = io.BytesIO(songObject['data'])
+    Flask.sendFile(responseFile)
 
-    response = make_response(songObject['data'])
-    response.headers['Content-Type'] = songObject['fileType']
-    response.headers["Content-Dispostion"] = 'inline'
+    # response = make_response(songObject['data'])
+    # response.headers['Content-Type'] = songObject['fileType']
+    # response.headers["Content-Dispostion"] = 'inline'
 
-    return jsonify(response), 200
+    # return jsonify(response), 200
+    return 200
 
     # response = write(name=name, data=songObject['data'])
     # .read(
     #     0, len(songObject['data'])))
-
-    # return jsonify(responseFile), 200
 
 
 # function to check if file to upload is already in the DB:

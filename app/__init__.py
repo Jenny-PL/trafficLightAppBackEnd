@@ -54,37 +54,15 @@ def get_audiobook_chapter():
 
 @app.route("/alarmsong/<name>", methods=["GET"])
 def get_wake_up_song(name):
-    songObject = mongo_db.wakeup.find_one({'name': name})  # fine song by name
+    songObject = mongo_db.wakeup.find_one({'name': name})  # find song by name
     print(type(songObject['data']))
-    # response = write(name, np.fromiter(songObject["data"], np.int16))
 
-    # decoded = base64.decodebytes(songObject['data']['$binary']['base64'])
-
-    # decoded = songObject['data']
-
-    # go back to this:
-    # decoded = songObject['data']['$binary']
     responseFile = io.BytesIO(songObject['data'])
 
-    # responseFile = io.BytesIO(songObject['data'])
-    # next try to put responseFile back into io.B
-
-    # flask.send_file(decoded)
     return send_file(
         responseFile,
         mimetype=songObject['type'],
         as_attachment=False), 200
-
-    # response = make_response(decoded)
-    # response.headers['Content-Type'] = songObject['fileType']
-    # response.headers["Content-Dispostion"] = 'inline'
-
-    # return jsonify(response), 200
-    # return send_file(responseFile, mimesongObject['type'] ), 200
-
-    # response = write(name=name, data=songObject['data'])
-    # .read(
-    #     0, len(songObject['data'])))
 
 
 # https://flask.palletsprojects.com/en/2.1.x/patterns/fileuploads/

@@ -71,7 +71,7 @@ def get_wake_up_song(name):
         io.BytesIO(decoded),
         mimetype=songObject['type'],
         as_attachment=False,
-        download_name=songObject['name']), 200
+        filename_=songObject['name']), 200
 
     # response = make_response(decoded)
     # response.headers['Content-Type'] = songObject['fileType']

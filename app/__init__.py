@@ -1,24 +1,17 @@
 from flask import Flask, jsonify, request, send_file
 from dotenv import load_dotenv
 from flask_cors import CORS
-import json
 import os
 import pymongo
-import base64
-# not using yet
-import numpy as np
-import requests
 import io
-# from io import BytesIO
-from scipy.io.wavfile import read, write
-# from flask_pymongo import PyMongo
 
 load_dotenv()  # use dotenv to hide sensitive credential as environment variables
-
 DATABASE_URI = os.environ.get("MONGO_URI")
+
 # establish connection with database
 client = pymongo.MongoClient(DATABASE_URI)
-mongo_db = client.trafficlight  # assign the specific database to mongo_db
+# assign the specific database to mongo_db
+mongo_db = client.trafficlight
 # collections available: audiobooks, wakeup
 
 app = Flask(__name__)
@@ -28,6 +21,56 @@ CORS(app)
 @app.route("/")
 def test_route():
     return "capstone project!"
+
+
+# Search for song by name, return audiofile
+@app.route("/alarmsong/<name>", methods=["GET"])
+def get_wake_up_song(name):
+    songObject = mongo_db.wakeup.find_one({'name': name})
+    print(type(songObject['data']))
+
+    responseFile = io.BytesIO(songObject['data'])
+
+    return send_file(
+        responseFile,
+        mimetype=songObject['type'],
+        as_attachment=False), 200
+
+
+# Send uploaded audio file to database:
+# {'name': fileDetails.filename, 'type': fileDetails.content_type, 'data': new_song}
+@app.route("/alarmsong", methods=["POST"])
+def add_wake_up_song():
+    if 'song-file' not in request.files:
+        print("song not here.")
+    else:
+        print(f"Here is the song-file: {request.files['song-file']}")
+        fileDetails = request.files['song-file']
+        new_song = request.files['song-file'].read()
+        print(type(new_song))  # <class 'bytes'>
+
+        songCount = mongo_db.wakeup.count_documents(
+            {'name': fileDetails.filename})
+        if songCount > 0:
+            return 'file already in DB. No new file added'
+        elif songCount == 0:
+            print({'name': fileDetails.filename, 'type': fileDetails.content_type})
+            # {'name': 'PAW Patrol.mp3', 'type': 'audio/mpeg'}
+            mongo_db.wakeup.insert_one(
+                {'name': fileDetails.filename, 'type': fileDetails.content_type, 'data': new_song})
+            response = f"{fileDetails.filename} audio file added to database, sent as bson!"
+    return jsonify(response), 201
+
+
+# This routes returns all available songs names in wakeup collection
+# Example: {"songList": ["PAW Patrol.mp3", "The Lion King - I Just Cant Wait to be King.mp3", "Un bolero de soledad.mp3" ]}
+@app.route("/playmusic", methods=["GET"])
+def get_music():
+    music = mongo_db.wakeup.find()
+    song_list = []
+    for song in music:
+        song_list.append(song['name'])
+    return ({'songList': song_list})
 
 
 @app.route("/audiobook", methods=["POST"])
@@ -46,67 +89,6 @@ def get_audiobook_chapter():
     numberOfChapters = songCount
     return jsonify(numberOfChapters, first_chapter), 200
 
-# goal: play a wake up song
-# https://medium.com/analytics-vidhya/extracting-audio-files-from-api-storing-it-on-a-nosql-database-789c12311a48
-
-# {'name': fileDetails.filename, 'type': fileDetails.content_type, 'data': new_song}
-
-
-@app.route("/alarmsong/<name>", methods=["GET"])
-def get_wake_up_song(name):
-    songObject = mongo_db.wakeup.find_one({'name': name})  # find song by name
-    print(type(songObject['data']))
-
-    responseFile = io.BytesIO(songObject['data'])
-
-    return send_file(
-        responseFile,
-        mimetype=songObject['type'],
-        as_attachment=False), 200
-
-
-# https://flask.palletsprojects.com/en/2.1.x/patterns/fileuploads/
-@app.route("/alarmsong", methods=["POST"])
-def add_wake_up_song():
-    if 'song-file' not in request.files:
-        print("song not here.")
-    else:
-        # <FileStorage: 'PAW Patrol.wav' ('audio/wav')>
-        print(f"Here is the song-file: {request.files['song-file']}")
-        fileDetails = request.files['song-file']
-        # print(dir(fileDetails)) 'content_type', 'filename',
-        new_song = request.files['song-file'].read()
-        print(type(new_song))  # <class 'bytes'>
-
-        songCount = mongo_db.wakeup.count_documents(
-            {'name': fileDetails.filename})
-        if songCount > 0:
-            return 'file already in DB. No new file added'
-        elif songCount == 0:
-            # {'name': 'PAW Patrol.mp3', 'type': 'audio/mpeg'}
-            print({'name': fileDetails.filename, 'type': fileDetails.content_type})
-            mongo_db.wakeup.insert_one(
-                {'name': fileDetails.filename, 'type': fileDetails.content_type, 'data': new_song})
-            response = f"{fileDetails.filename} audio file added to database, sent as bson!"
-    return jsonify(response), 201
-
-
-# {'name': fileDetails.filename, 'type': fileDetails.content_type, 'data': new_song}
-# This routes returns all available songs names in wakeup collection
-@app.route("/playmusic", methods=["GET"])
-def get_music():
-    music = mongo_db.wakeup.find()
-    song_list = []
-    for song in music:
-        song_list.append(song['name'])
-    return ({'songList': song_list})
-
-# {"songList": ["PAW Patrol.mp3", "The Lion King - I Just Cant Wait to be King.mp3", "Un bolero de soledad.mp3" ]}
-
 
 if __name__ == 'main':
     app.run()
-
-
-# tutorial:
-# https://medium.com/analytics-vidhya/deploy-a-web-api-with-python-flask-and-mongodb-on-heroku-in-10-mins-71c4571c505d

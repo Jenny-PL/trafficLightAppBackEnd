@@ -8,10 +8,12 @@
 - Traffic light turns from red --> green when wake up time is reached
 - The circular progress bar gives a visual of how much time is left, relative to when the alarm was set.
 - There is an option to upload audio and play wake up music, in the case that the user must wake up at a certain time
+- Choose from songs stored in a database
+- There is an option that allows the user to to play music or audiobooks once the green light is on
 
 ## Features in production:
-- Retrieve stored songs from the mongoDB database
-- Have buttons that allow user to play music or audiobooks once the green light is on
+- Add audiobooks to database
+- Style the website! Most importantly, make the circular progress bar component more easily visible.
 - Make it a progressive web app
 
 ## Technology used:
